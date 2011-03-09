@@ -1,0 +1,120 @@
+#
+# originally from the NGINX wiki at http://wiki.nginx.org/Drupal, but modified based on my prefered
+# configuration preferences
+#
+
+server {
+  listen 80;
+  server_name www.<%= host %>;
+  rewrite ^/(.*) http://<%= host %>/$1 permanent;
+}
+
+server {
+  listen 80;
+  server_name <%= host %>;
+  root /var/www/docroot; 
+  access_log  /var/log/nginx/<%= project %>.access.log ;
+
+  location = /favicon.ico {
+    log_not_found off;
+    access_log off;
+  }
+
+  location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+  }
+
+  ##
+  # all of these use 404s in place of 403s to reduce the information available to those who are probing your site
+  # 
+  
+  # This matters if you use drush
+  location = /backup {
+    return 404;
+  }
+
+  # hide the drops :)
+  location = /node {
+    return 404;
+  }
+  
+  location = /taxonomy {
+    return 404;
+  }
+  
+  location /scripts {
+    return 404;
+  }
+  
+  location /includes {
+    return 404;
+  }
+  
+  location /profile {
+    return 404;
+  }
+  
+  location /install.php {
+    return 404;
+  }
+  
+  location /update.php {
+    return 404;
+  }
+  
+  # I asssume we're going to use drush for cron, otherwise comment this out
+  location /cron.php {
+    return 404;
+  }
+  
+  # uncomment if you don't use the Blog API
+  # location /xmlrpc.php {
+  #   return 404;
+  # }
+  
+  # don't give up the various text files that ship with drupal
+  location ~ (INSTALL\.txt|CHANGELOG\.txt|COPYRIGHT\.txt|INSTALL\.mysql\.txt|INSTALL\.pgsql\.txt|LICENSE\.txt|MAINTAINERS\.txt|UPGRADE\.txt) {
+    return 404;
+  }
+
+  # avoid a few different types of files that we don't want users finding in our document root
+  location ~* \.(log|engine|inc|info|install|module|profile|test|po|sh|.*sql|theme|tpl(\.php)?|xtmpl|svn-base)$|^(code-style\.pl|Entries.*|Repository|Root|Tag|Template|all-wcprops|entries|format)$ {
+    return 404;
+  }
+  
+  location ~ \..*/.*\.php$ {
+    return 404;
+  }
+
+  location / {
+    # This is cool because no php is touched for static content
+    try_files $uri @rewrite;
+  }
+
+  location @rewrite {
+    # Some modules enforce no slash (/) at the end of the URL
+    # Else this rewrite block wouldn't be needed (GlobalRedirect)
+    rewrite ^/(.*)$ /index.php?q=$1;
+  }
+
+  location ~ \.php$ {
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_intercept_errors on;
+    fastcgi_pass unix:/etc/php5/fpm/${host}.socket;
+  }
+
+  # Fighting with ImageCache? This little gem is amazing.
+  location ~ ^/sites/.*/files/imagecache/ {
+    try_files $uri @rewrite;
+  }
+
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+    expires max;
+    log_not_found off;
+  }
+}
