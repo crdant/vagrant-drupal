@@ -57,4 +57,39 @@ class drush {
       File["drush-local-command-directory"], 
     ],
   }
+  
+  ##
+  # Load the Drupal database from an export
+  # 
+  define loaddb($url,$root,$file) {
+    # TODO: make agnostic to Drush versions, currently only 3.x
+    # can't use the basic define for Drush commands here because I need to use the output of 
+    # the call to the command as the command that I execute
+    exec { "import db: $file":
+	    require => Service["drush-link"],
+	    cwd => $root,
+	    path => "/bin:/usr/bin:/usr/local/bin",
+	    command => "`drush -u $uid -l $url sql-connect` < $file"
+  	}
+  }
+  
+  ##
+  # Update the Drupal database
+  #
+  define updatedb($url,$root) {
+    drush::command { "updatedb" : user => 1, commmand => "updatedb", url => $url, root => $root }
+  }
+  
+  
+  ##
+  # run a Drush command as a specified user on the specified site
+  #
+  define command($uid,$command,$url,$root, $arguments = null) {
+  	exec { "Drush command: $command":
+	    require => Service["drush-link"],
+	    cwd => $root,
+	    path => "/bin:/usr/bin:/usr/local/bin",
+	    command => "drush -u $uid -l $url ${cmd} ${arguments}"
+  	}
+  }
 }
