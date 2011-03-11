@@ -12,7 +12,7 @@ server {
 server {
   listen 80;
   server_name <%= host %>;
-  root /var/www/docroot; 
+  root <%= docroot %>; 
   access_log  /var/log/nginx/<%= project %>.access.log ;
 
   location = /favicon.ico {

@@ -3,7 +3,7 @@ class mysql {
     ensure => present,
   }
   
-  service { "mysql-server":
+  service { "mysql":
     ensure => running,
     require => Package["mysql-server"],
   }

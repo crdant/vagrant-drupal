@@ -1,5 +1,7 @@
 class drush {
-
+  
+  $make_version = "6.x-2.1"
+  
   package { "drush":
     ensure => present,
   }
@@ -32,7 +34,7 @@ class drush {
   ##
   # Setup the drushrc for the local commands
   #
-  file { "/opt/drush/drushrc.php":
+  file { "/usr/share/drush/drushrc.php":
     alias   => "drush-drushrc",
     mode    => "755",
     owner   => "root",
@@ -47,8 +49,8 @@ class drush {
   # Install drush make to the local commands directory
   #
   exec { "drush-make-download":
-    command => "/usr/bin/wget -q ",
-    cwd => '$command_dir',
+    command => "/usr/bin/wget -q -O - http://ftp.drupal.org/files/projects/drush_make-${make_version}.tar.gz | tar -xzf -",
+    cwd => "$command_dir",
     creates => "${cwd}/${name}",
     require => [
       Package["drush"],
