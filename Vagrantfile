@@ -1,5 +1,5 @@
-project_name = "Open Atrium"
-project = "openatrium"
+project_name = "Drupal Site"
+project = "site"
 
 Vagrant::Config.run do |config|
   # All Vagrant configuration is done here. The most common configuration
