@@ -5,10 +5,10 @@ class drupal {
     owner => root,
     group => root,
     mode => 644,
-    source => "puppet:///drupal/php.ini"
+    source => "puppet:///modules/drupal/php.ini"
   }
   
-  define cron ($site_url, $site_group, $site_name) {
+  define cron ( $docroot, $site_url) {
     cron { "${site_name}-cron":
       command => "/opt/drush/drush -u 1 -r $docroot -l $site_url cron",
       user => root,
@@ -26,9 +26,23 @@ class drupal {
     user => $project, password => $dbpassword }
 
   # install drupal
-  drush::make{"make site": destination => $docroot, source_directory => $source_directory }
-  drush::install{"install drupal":
-    dbuser => $project, dbpass => $dbpassword, dbname => $project, profile => "buildkit"
+  drush::make{"make site": 
+    destination => $docroot, 
+    source_directory => $source_directory,
+  }
+  
+  # remove the sites directory and replace with a link to the sites directory in 
+  # the project directory
+  file { "$docroot/sites":
+    target => "../sites",
+    force => true,
+  }
+  
+  # install drupal
+  drush::install{ "install drupal": 
+    root => $docroot, profile => "buildkit", 
+    dbuser => $project, dbpass => $dbpassword, dbname => $project,
+    require => Exec["drush make site.make"]
   }
   
 }

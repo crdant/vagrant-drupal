@@ -105,7 +105,7 @@ server {
     include fastcgi_params;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     fastcgi_intercept_errors on;
-    fastcgi_pass unix:/etc/php5/fpm/${host}.socket;
+    fastcgi_pass unix:/tmp/fpm/<%= project %>.socket;
   }
 
   # Fighting with ImageCache? This little gem is amazing.

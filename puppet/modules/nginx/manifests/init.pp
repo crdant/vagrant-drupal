@@ -23,7 +23,7 @@ class nginx {
     require => [ File["/etc/nginx"] ],
   }
   
-  # use the default location for lucid
+  # use the default location for maverick
   file { "/etc/nginx/sites-enabled/$host":
     mode    => 644,
     owner   => root,
@@ -31,5 +31,4 @@ class nginx {
     require => [ Package["nginx"], File["/etc/nginx/sites-enabled"] ],
     content  => template("nginx/project.erb"),
   }
-  
 }

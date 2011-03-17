@@ -13,7 +13,8 @@ class mysql {
   
   # set the MySQL root password
   exec { "set root password": 
-    command => "mysqladmin -u root password ${root_password}",
+    command => "mysqladmin -u root password ${mysql::root_password}",
+    unless => "mysql -u root --password=${mysql::root_password} -e 'select 1 + 1;'",
     path => "/bin:/usr/bin",
     require => [
       Package["mysql-server"], 
@@ -25,18 +26,24 @@ class mysql {
   # this only creates the database if it does not exist.
   define createdb($database) {
     exec { "Create Database: $database":
-      require => Service["mysql"],
       path => "/bin:/usr/bin",
-      command => "mysql -u root --password=${mysql::root_password} -e 'create database if not exists $database'"
+      command => "mysql -u root --password=${mysql::root_password} -e 'create database if not exists $database;'",
+      require => [
+        Service["mysql"],
+        Exec["set root password"],
+      ],
     }
   }
   
   # create a new user inside of mysql
   define createuser($user, $host = '%', $password) {
     exec { "Create User: $user":
-      command => "mysql -u root --password=${mysql::root_password} -e 'create user \'${user}\'@\'${host}\' identified by \'${password}\');'",
+      command => "mysql -u root --password=${mysql::root_password} -e \"create user \'${user}\'@\'${host}\' identified by \'${password}\';\"",
 	    path => "/bin:/usr/bin",
-      require => Service["mysql"],
+	    require => [
+	      Service["mysql"],
+        Exec["set root password"]
+      ]
     }
   }
 
@@ -45,7 +52,10 @@ class mysql {
     exec { "Create User: $user":
       command => "mysql -u root --password=${mysql::root_password} -e 'set password for \'${user}\'@\'${host}\' = password(\'${password}\');'",
 	    path => "/bin:/usr/bin",
-      require => Service["mysql"],
+	    require => [
+	      Service["mysql"],
+        Exec["set root password"]
+      ]
     }
   }
 }
