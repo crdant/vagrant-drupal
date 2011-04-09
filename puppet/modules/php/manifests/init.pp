@@ -66,7 +66,6 @@ class php {
     ],
     notify => [
       Service["php5-fpm"],
-      Service["nginx"]
     ],
     content  => template("php/site.conf.erb"),
   }
