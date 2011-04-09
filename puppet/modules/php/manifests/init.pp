@@ -28,7 +28,7 @@ class php {
     require => [
       Package["libevent"],
       File["/var/www"],
-    }
+    ],
   }
   
   service { "php5-fpm":
@@ -62,8 +62,21 @@ class php {
     group   => root,
     require => [ 
       Package["php5-fpm"], 
+      File["/tmp/fpm"],
+    ],
+    notify => [
+      Service["php5-fpm"],
+      Service["nginx"]
     ],
     content  => template("php/site.conf.erb"),
+  }
+  
+  # create the directory where the FPM socket will be located
+  file { "/tmp/fpm":
+    ensure  => directory,
+    mode    => 700,
+    owner   => www-data,
+    group   => www-data,
   }
   
 }

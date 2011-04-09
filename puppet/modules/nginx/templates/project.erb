@@ -14,6 +14,7 @@ server {
   server_name <%= host %>;
   root <%= docroot %>; 
   access_log  /var/log/nginx/<%= project %>.access.log ;
+  error_log  /var/log/nginx/<%= project %>.error.log debug;
 
   location = /favicon.ico {
     log_not_found off;
@@ -56,9 +57,9 @@ server {
     return 404;
   }
   
-  location /install.php {
-    return 404;
-  }
+  # location /install.php {
+  #   return 404;
+  # }
   
   location /update.php {
     return 404;
