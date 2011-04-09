@@ -12,7 +12,7 @@ class maverick64 {
   $ip = "172.31.33.101"
   
   # setup the document root
-  $docroot = "/vagrant/docroot"
+  $docroot = "${source_directory}/docroot"
     
   package { "wget":
     ensure => "present",
@@ -33,7 +33,7 @@ class maverick64 {
   include drupal
   # include drupal::development
   # include user
-  
+    
   # install open atrium with drush make
   # http://drupalcode.org/project/openatrium.git/blob/HEAD:/openatrium.make
 }

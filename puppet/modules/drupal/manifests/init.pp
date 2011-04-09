@@ -24,6 +24,8 @@ class drupal {
     database => $project }
   mysql::createuser { "create $project DB": 
     user => $project, password => $dbpassword }
+  mysql::grant { "grant all on $project DB": 
+    user => $project, permission => "all", entity => "${project}.*" }
 
   # install drupal
   drush::make{"make site": 
@@ -31,10 +33,11 @@ class drupal {
     source_directory => $source_directory,
   }
   
+  $sites_directory = stripcomponents($docroot,1)
   # remove the sites directory and replace with a link to the sites directory in 
   # the project directory
   file { "$docroot/sites":
-    target => "../sites",
+    target => $sites_directory,
     force => true,
   }
   
@@ -42,7 +45,14 @@ class drupal {
   drush::install{ "install drupal": 
     root => $docroot, profile => "buildkit", 
     dbuser => $project, dbpass => $dbpassword, dbname => $project,
-    require => Exec["drush make site.make"]
+    require => [
+      Exec["drush make site.make"],
+      File["$docroot/sites"],
+    ],
   }
+  
+  # Make the relationship between the web server and PHP explicit, since nginx needs
+  # to restart after we establish the socket for communication between them
+  Service["php5-fpm"] ~> Service["nginx"]
   
 }

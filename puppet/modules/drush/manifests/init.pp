@@ -113,8 +113,8 @@ class drush {
   	exec { "drush install ${root}":
 	    cwd => $root,
 	    path => "/bin:/usr/bin",
-	    command => "drush si --account-name $user1 --account-pass $user1password $account-mail $user1mail \
-	      --db-url mysqli://$dbuser:$dbpass@localhost/$dbname $profile ",
+	    command => "drush si --yes --account-name=$user1 --account-pass=$user1password --account-mail=$user1mail \
+	      --db-url=mysqli://$dbuser:$dbpass@localhost/$dbname $profile ",
       require => [
         File["drush-link"],
       ]
@@ -152,7 +152,7 @@ class drush {
     exec { "import db: $file":
 	    cwd => $root,
 	    path => "/bin:/usr/bin",
-	    command => "`drush -u $uid -l $url sql-connect` < $file",
+	    command => "`drush --yes -u $uid -l $url sql-connect` < $file",
       require => [
 	      File["drush-link"],
 	      Exec["drush-make-download"],
@@ -174,7 +174,7 @@ class drush {
   	exec { "Drush command: $command":
 	    cwd => $root,
 	    path => "/bin:/usr/bin",
-	    command => "drush -u $uid -l $url ${cmd} ${arguments}",
+	    command => "drush --yes -u $uid -l $url ${cmd} ${arguments}",
       require => [
 	      File["drush-link"],
 	    ],	    
