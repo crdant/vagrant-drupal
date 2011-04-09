@@ -42,19 +42,19 @@ class mysql {
 	    path => "/bin:/usr/bin",
 	    require => [
 	      Service["mysql"],
-        Exec["set root password"]
+        Exec["set root password"],
       ]
     }
   }
 
-  # set a user's password inside of mysql
-  define setpassword($user, $host = '%', $password) {
-    exec { "Create User: $user":
-      command => "mysql -u root --password=${mysql::root_password} -e 'set password for \'${user}\'@\'${host}\' = password(\'${password}\');'",
+  # grant rights to a user
+  define grant($user, $host = '%', $permission, $entity) {
+    exec { "Grant: $user, $permission, $entity":
+      command => "mysql -u root --password=${mysql::root_password} -e \"grant ${permission} on ${entity} to \'${user}\'@\'${host}\';\"",
 	    path => "/bin:/usr/bin",
 	    require => [
 	      Service["mysql"],
-        Exec["set root password"]
+        Exec["set root password"],
       ]
     }
   }
