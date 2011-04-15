@@ -1,12 +1,13 @@
 class maverick64 {
   
   # can I move these to my Vagrant file and reference them here?
-  $host = "site.dev"
-  $project = "site"
+  $host = "vagrant.dev"
+  $project = "vagrant"
   $dbpassword = "ij2t%9hi3swi"
   $user1 = "admin"
   $user1password = "admin"
   $source_directory = "/vagrant"
+  $site_url = "http://${host}/"
   
   # this is already defined in the vagrant config, can I grab it?
   $ip = "172.31.33.101"
@@ -31,11 +32,7 @@ class maverick64 {
   include mysql
   include drush
   include drupal
-  # include drupal::development
-  # include user
-    
-  # install open atrium with drush make
-  # http://drupalcode.org/project/openatrium.git/blob/HEAD:/openatrium.make
+
 }
 
 include maverick64

@@ -14,7 +14,7 @@ server {
   server_name <%= host %>;
   root <%= docroot %>; 
   access_log  /var/log/nginx/<%= project %>.access.log ;
-  error_log  /var/log/nginx/<%= project %>.error.log debug;
+  error_log  /var/log/nginx/<%= project %>.error.log ;
 
   location = /favicon.ico {
     log_not_found off;

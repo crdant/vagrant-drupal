@@ -105,7 +105,7 @@ class drush {
     $base_requirements = [ File["drush-link"], Exec["drush-make-download"], ]
     
     if $require {
-      $requirements = [$base_requirements, $require] 
+      $requirements = [ $base_requirements, $require ]
     } else {
       $requirements = $base_requirements
     }
@@ -113,10 +113,10 @@ class drush {
   	exec { "drush install ${root}":
 	    cwd => $root,
 	    path => "/bin:/usr/bin",
-	    command => "drush si --yes --account-name=$user1 --account-pass=$user1password --account-mail=$user1mail \
+	    command => "drush si --yes --verbose --account-name=$user1 --account-pass=$user1password --account-mail=$user1mail \
 	      --db-url=mysqli://$dbuser:$dbpass@localhost/$dbname $profile ",
       require => [
-        File["drush-link"],
+        $requirements,
       ]
   	}
 	}
@@ -124,15 +124,15 @@ class drush {
   ##
   # Run drush make to set up the site before installing
   #
-  define make($makefile = "site.make", $destination, $source_directory) {
+  define make($makefile, $destination, $source_directory) {
     $base_requirements = [ File["drush-link"], Exec["drush-make-download"], ]
-    
+  
     if $require {
-      $requirements = $base_requirements + $require
+      $requirements = [ $base_requirements, $require ]
     } else {
       $requirements = $base_requirements
     }
-    
+       
   	exec { "drush make ${makefile}":
 	    cwd => $source_directory,
 	    path => "/bin:/usr/bin",
@@ -161,23 +161,48 @@ class drush {
   }
   
   ##
-  # Update the Drupal database
+  # Enable a module
   #
-  define updatedb($url,$root) {
-    drush::command { "updatedb" : user => 1, commmand => "updatedb", url => $url, root => $root }
+  define enable($module, $url, $root) {
+    drush::command { "enable $module" : 
+      uid => 1, 
+      command => "pm-enable", 
+      arguments => $module,
+      url => $url, 
+      root => $root, 
+    }
+  }
+  
+  ##
+  # Disable a module
+  #
+  define disable($module, $url, $root) {
+    drush::command { "disable $module" : 
+      uid => 1, 
+      command => "dis", 
+      arguments => $module,
+      url => $url, 
+      root => $root, 
+    }
   }
   
   ##
   # run a Drush command as a specified user on the specified site
   #
   define command($uid,$command,$url,$root, $arguments = null) {
-  	exec { "Drush command: $command":
+    $base_requirements = [ File["drush-link"], ]
+  
+    if $require {
+      $requirements = [ $base_requirements, $require ]
+    } else {
+      $requirements = $base_requirements
+    }
+    
+  	exec { "Drush command: $command $arguments":
 	    cwd => $root,
 	    path => "/bin:/usr/bin",
-	    command => "drush --yes -u $uid -l $url ${cmd} ${arguments}",
-      require => [
-	      File["drush-link"],
-	    ],	    
+	    command => "drush --yes -u $uid -l $url ${command} ${arguments}",
+      require => $requirements,	    
   	}
   }
 }
