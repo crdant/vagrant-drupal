@@ -9,9 +9,6 @@ class maverick64 {
   $source_directory = "/vagrant"
   $site_url = "http://${host}/"
   
-  # this is already defined in the vagrant config, can I grab it?
-  $ip = "172.31.33.101"
-  
   # setup the document root
   $docroot = "${source_directory}/docroot"
     
@@ -23,7 +20,7 @@ class maverick64 {
   # and having www.$host and $host map to the same site
   host { "$host":
     ensure => "present",
-    ip     => "$ip",
+    ip     => "127.0.0.1",
     host_aliases => [ "www.$host", "m.$host"],
   }
   
