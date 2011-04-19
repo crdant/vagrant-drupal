@@ -1,8 +1,8 @@
 class maverick64 {
   
   # can I move these to my Vagrant file and reference them here?
-  $host = "vagrant.dev"
-  $project = "vagrant"
+  $host = "foundation.dev"
+  $project = "foundation"
   $dbpassword = "ij2t%9hi3swi"
   $user1 = "admin"
   $user1password = "admin"

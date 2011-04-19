@@ -1,5 +1,5 @@
-project_name = "Drupal Site"
-project = "site"
+project_name = "Drupal Foundation"
+project = "foundation"
 
 Vagrant::Config.run do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -37,11 +37,5 @@ Vagrant::Config.run do |config|
     vm.memory_size = 1024
     vm.name = "#{project_name} Development Instance"
   end
-  
-  # set up the IP address for host-only networking, be sure to put this one
-  # in your hosts file as well to match the hostname you select for your server
-  # NB: the vagrant docs use 33.33.33.0/24 and says it's "reliable", but it's 
-  # also a routable network and not one reserved for private networks.
-  config.vm.network("172.27.33.4")
   
 end
