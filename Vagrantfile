@@ -26,10 +26,6 @@ Vagrant::Config.run do |config|
     puppet.module_path = "puppet/modules"
     puppet.manifests_path = "puppet/manifests"
   end
-
-  # mount my project directory in someplace approximating where I'd unpack
-  # the tarball/clone/checkout in production
-  # config.vm.project_directory = "/var/www/#{project}"
   
   # adjust the VM configuration for easier operation and so that the name
   # makes sense in the Virtual Box GUI
