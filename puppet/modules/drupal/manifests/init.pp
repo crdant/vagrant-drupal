@@ -71,7 +71,7 @@ class drupal {
   file { "$docroot/sites":
     ensure => "link",
     target => "../sites",
-    # force => "true",
+    force => "true",
     require => [ 
       File["$source_directory/sites"],
     ]
