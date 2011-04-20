@@ -6,6 +6,7 @@ class maverick64 {
   $dbpassword = "ij2t%9hi3swi"
   $user1 = "admin"
   $user1password = "admin"
+  $user1mail = "admin@mailinator.com"
   $source_directory = "/vagrant"
   $site_url = "http://${host}/"
   
