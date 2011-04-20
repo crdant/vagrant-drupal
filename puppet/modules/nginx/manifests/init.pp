@@ -28,7 +28,8 @@ class nginx {
     mode    => 644,
     owner   => root,
     group   => root,
-    require => [ Package["nginx"], File["/etc/nginx/sites-enabled"] ],
-    content  => template("nginx/project.erb"),
+    require => [ Package["nginx"], File["/etc/nginx/sites-enabled"], ],
+    content => template("nginx/project.erb"),
+    notify  => [ Service ["nginx"], ],
   }
 }
