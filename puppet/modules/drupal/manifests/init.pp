@@ -99,4 +99,14 @@ class drupal {
     ],
   }
   
+  # load a database extract, if it exists
+  drush::loaddb{"load database extract: ${project}":
+    url => $site_url,
+    root => $docroot,
+    file => "${source_directory}/db/${project}.sql",
+    require => [
+      Exec["drush install /vagrant/docroot"],
+    ],
+  }
+  
 }

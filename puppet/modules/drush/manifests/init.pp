@@ -1,6 +1,6 @@
 class drush {
 
-  $version = "All-versions-4.2"
+  $version = "7.x-4.4"
   $make_version = "6.x-2.1"
   
   ##
@@ -146,13 +146,15 @@ class drush {
   # Load the Drupal database from an export
   # 
   define loaddb($url,$root,$file) {
+
     # TODO: make agnostic to Drush versions, currently only 3.x
     # can't use the basic define for Drush commands here because I need to use the output of 
     # the call to the command as the command that I execute
     exec { "import db: $file":
 	    cwd => $root,
 	    path => "/bin:/usr/bin",
-	    command => "`drush --yes -u $uid -l $url sql-connect` < $file",
+	    command => "drush --yes -l $url sql-connect < $file",
+	    onlyif => "test -f $file",
       require => [
 	      File["drush-link"],
 	      Exec["drush-make-download"],
